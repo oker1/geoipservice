@@ -17,7 +17,9 @@ public class GeoIpServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        final String country = new GeoIpCountryCommand(req.getParameter("ip")).execute();
+
         PrintWriter pw = resp.getWriter();
-        pw.write(new GeoIpCountryCommand().execute());
+        pw.write(country);
     }
 }
