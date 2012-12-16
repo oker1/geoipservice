@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * @author oker <zsolt@takacs.cc>
@@ -17,9 +19,15 @@ public class GeoIpServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        final String country = new GeoIpCountryCommand(req.getParameter("ip")).execute();
+        final Future<String> country = new CountryLookupCollapser(req.getParameter("ip")).queue();
 
         PrintWriter pw = resp.getWriter();
-        pw.write(country);
+        try {
+            pw.write(country.get());
+        } catch (InterruptedException e) {
+            throw new ServletException(e);
+        } catch (ExecutionException e) {
+            throw new ServletException(e);
+        }
     }
 }
