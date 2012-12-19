@@ -1,0 +1,3 @@
+[submodule "geoip-api-java"]
+	path = geoip-api-java
+	url = https://github.com/oker1/geoip-api-java.git
